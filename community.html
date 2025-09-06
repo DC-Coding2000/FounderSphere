@@ -1,0 +1,1709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FounderSphere - Community</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #000;
+            --secondary-color: #333;
+            --accent-color: #666;
+            --light-bg: #f8f8f8;
+            --white: #fff;
+            --border-color: #eee;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --border-radius: 15px;
+            --transition: all 0.3s ease;
+            --shadow: 0 10px 30px rgba(0,0,0,0.1);
+            --shadow-hover: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: var(--secondary-color);
+            background: var(--light-bg);
+        }
+
+        /* Header & Navigation */
+        .header {
+            background: var(--white);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            padding: 1rem 0;
+        }
+
+        .nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--secondary-color);
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--primary-color);
+        }
+
+        .nav-links a.active::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--primary-color);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Page Header */
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .page-title {
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .page-subtitle {
+            font-size: 1.2rem;
+            color: var(--accent-color);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Tab Navigation */
+        .tab-nav {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            background: var(--white);
+            border: 2px solid var(--border-color);
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            color: var(--secondary-color);
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        .tab-btn:hover, .tab-btn.active {
+            background: var(--primary-color);
+            color: var(--white);
+            border-color: var(--primary-color);
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
+            overflow: hidden;
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-5px);
+        }
+
+        .card-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .card-footer {
+            padding: 1rem 1.5rem;
+            background: var(--light-bg);
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0,0,0,0.1);
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.8rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: var(--white);
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary-color);
+            color: var(--white);
+        }
+
+        .btn-success {
+            background: var(--success-color);
+            color: var(--white);
+        }
+
+        .btn-warning {
+            background: var(--warning-color);
+            color: var(--primary-color);
+        }
+
+        .btn-danger {
+            background: var(--danger-color);
+            color: var(--white);
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }
+
+        /* Grid Layouts */
+        .grid {
+            display: grid;
+            gap: 2rem;
+        }
+
+        .grid-2 {
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        }
+
+        .grid-3 {
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        }
+
+        /* Project Cards */
+        .project-card {
+            position: relative;
+        }
+
+        .project-category {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--primary-color);
+            color: var(--white);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .project-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .project-author {
+            color: var(--accent-color);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .project-description {
+            color: var(--secondary-color);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .project-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .like-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: none;
+            border: none;
+            color: var(--accent-color);
+            cursor: pointer;
+            transition: var(--transition);
+            padding: 0.5rem;
+        }
+
+        .like-btn:hover, .like-btn.liked {
+            color: var(--danger-color);
+        }
+
+        .support-btn {
+            background: var(--success-color);
+            color: var(--white);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .support-btn:hover {
+            background: #218838;
+        }
+
+        /* Filters */
+        .filters {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-label {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        /* User Profile */
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .profile-info h2 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-stats {
+            display: flex;
+            gap: 2rem;
+            color: var(--accent-color);
+        }
+
+        /* Friend Request */
+        .friend-status {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        /* Notifications */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            color: var(--white);
+            font-weight: 500;
+            z-index: 10000;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            background: var(--success-color);
+        }
+
+        .notification.error {
+            background: var(--danger-color);
+        }
+
+        .notification.warning {
+            background: var(--warning-color);
+            color: var(--primary-color);
+        }
+
+        /* Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+
+        .modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--accent-color);
+        }
+
+        /* Loading States */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem;
+            color: var(--accent-color);
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--border-color);
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-links {
+                gap: 1rem;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .tab-nav {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .project-actions {
+                justify-content: center;
+            }
+
+            .filter-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+
+        /* Empty States */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--accent-color);
+        }
+
+        .empty-state h3 {
+            margin-bottom: 1rem;
+            color: var(--secondary-color);
+        }
+
+        /* Animation Classes */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <div class="logo">FounderSphere</div>
+            <ul class="nav-links">
+                <li><a href="loggedin_index.html">Home</a></li>
+                <li><a href="loggedin_index.html#about">About</a></li>
+                <li><a href="#" class="active">Community</a></li>
+                <li><a href="resources.html">Resources</a></li>
+                <li><a href="loggedin_index.html#contact">Contact</a></li>
+            </ul>
+            <div class="user-info" style="position: relative; cursor: pointer;">
+    <div class="user-avatar" id="userAvatar" tabindex="0" aria-haspopup="true" aria-expanded="false" aria-label="User  menu">?</div>
+    <span id="userName">Guest</span>
+    <div id="logoutMenu" style="
+        display: none;
+        position: absolute;
+        top: 50px;
+        right: 0;
+        background: var(--white);
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        box-shadow: var(--shadow);
+        padding: 0.5rem 1rem;
+        z-index: 1001;
+        min-width: 100px;
+        text-align: center;
+        user-select: none;
+    ">
+        <button id="logoutBtn" class="btn btn-danger btn-sm" style="width: 100%;">Logout</button>
+    </div>
+</div>
+
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Page Header -->
+        <div class="page-header fade-in">
+            <h1 class="page-title">Community Hub</h1>
+            <p class="page-subtitle">
+                Connect with fellow founders, share your ideas, and build the future together.
+            </p>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="tab-nav fade-in">
+            <button class="tab-btn active" onclick="switchTab('projects', event)">All Projects</button>
+            <button class="tab-btn" onclick="switchTab('submit', event)">Submit Project</button>
+            <button class="tab-btn" onclick="switchTab('my-projects', event)">My Projects</button>
+            <button class="tab-btn" onclick="switchTab('friends', event)">Friends</button>
+            <button class="tab-btn" onclick="switchTab('profile', event)">My Profile</button>
+        </div>
+
+        <!-- All Projects Tab -->
+        <div id="projects-tab" class="tab-content active fade-in">
+            <!-- Filters -->
+            <div class="filters">
+                <div class="filter-group">
+                    <span class="filter-label">Filter by Category:</span>
+                    <select id="categoryFilter" class="form-control" style="width: auto;" onchange="filterProjects()">
+                        <option value="">All Categories</option>
+                        <option value="Technology">Technology</option>
+                        <option value="Healthcare">Healthcare</option>
+                        <option value="Education">Education</option>
+                        <option value="Finance">Finance</option>
+                        <option value="E-commerce">E-commerce</option>
+                        <option value="Social Impact">Social Impact</option>
+                        <option value="Entertainment">Entertainment</option>
+                        <option value="Other">Other</option>
+                    </select>
+                    <span class="filter-label">Sort by:</span>
+                    <select id="sortFilter" class="form-control" style="width: auto;" onchange="filterProjects()">
+                        <option value="newest">Newest First</option>
+                        <option value="oldest">Oldest First</option>
+                        <option value="mostLiked">Most Liked</option>
+                        <option value="leastLiked">Least Liked</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Projects Grid -->
+            <div id="projectsGrid" class="grid grid-2">
+                <!-- Projects will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Submit Project Tab -->
+        <div id="submit-tab" class="tab-content fade-in">
+            <div class="card" style="max-width: 600px; margin: 0 auto;">
+                <div class="card-header">
+                    <h3>Submit Your Project Idea</h3>
+                </div>
+                <div class="card-body">
+                    <form id="projectForm" onsubmit="submitProject(event)">
+                        <div class="form-group">
+                            <label class="form-label">Project Title *</label>
+                            <input type="text" class="form-control" id="projectTitle" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Category *</label>
+                            <select class="form-control" id="projectCategory" required>
+                                <option value="">Select a category</option>
+                                <option value="Technology">Technology</option>
+                                <option value="Healthcare">Healthcare</option>
+                                <option value="Education">Education</option>
+                                <option value="Finance">Finance</option>
+                                <option value="E-commerce">E-commerce</option>
+                                <option value="Social Impact">Social Impact</option>
+                                <option value="Entertainment">Entertainment</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Description *</label>
+                            <textarea class="form-control" id="projectDescription" required 
+                                placeholder="Describe your project idea, its goals, and potential impact..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Funding Goal ($)</label>
+                            <input type="number" class="form-control" id="fundingGoal" min="0" placeholder="Optional">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit Project</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- My Projects Tab -->
+        <div id="my-projects-tab" class="tab-content fade-in">
+            <div id="myProjectsGrid" class="grid grid-2">
+                <!-- User's projects will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Friends Tab -->
+        <div id="friends-tab" class="tab-content fade-in">
+            <div class="grid grid-2">
+                <!-- Friend Requests Section -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Friend Requests</h3>
+                    </div>
+                    <div class="card-body">
+                        <div id="friendRequestsList">
+                            <!-- Friend requests will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- My Friends Section -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>My Friends</h3>
+                    </div>
+                    <div class="card-body">
+                        <div id="friendsList">
+                            <!-- Friends will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Find Users Section -->
+            <div class="card" style="margin-top: 2rem;">
+                <div class="card-header">
+                    <h3>Find Users</h3>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="userSearch" 
+                            placeholder="Search for users..." onkeyup="searchUsers()">
+                    </div>
+                    <div id="searchResults" class="grid grid-3">
+                        <!-- Search results will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Tab -->
+        <div id="profile-tab" class="tab-content fade-in">
+            <div class="card">
+                <div class="card-body">
+                    <div class="profile-header">
+                        <div class="profile-avatar" id="profileAvatar">?</div>
+                        <div class="profile-info">
+                            <h2 id="profileName">User Name</h2>
+                            <div class="profile-stats">
+                                <span>Projects: <strong id="projectCount">0</strong></span>
+                                <span>Friends: <strong id="friendCount">0</strong></span>
+                                <span>Likes Given: <strong id="likesGiven">0</strong></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h3>My Project Contributions</h3>
+                    <div id="profileProjects" class="grid grid-2" style="margin-top: 1rem;">
+                        <!-- User's projects will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Support Modal -->
+    <div id="supportModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Support Project</h3>
+                <button class="close-btn" onclick="closeSupportModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Support <strong id="supportProjectTitle"></strong> by <strong id="supportProjectAuthor"></strong></p>
+                <div class="form-group">
+                    <label class="form-label">Amount ($) *</label>
+                    <input type="number" class="form-control" id="supportAmount" min="1" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Message (Optional)</label>
+                    <textarea class="form-control" id="supportMessage" 
+                        placeholder="Leave a message for the project creator..."></textarea>
+                </div>
+                <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1.5rem;">
+                    <button class="btn btn-secondary" onclick="closeSupportModal()">Cancel</button>
+                    <button class="btn btn-success" onclick="processSupportPayment()">Support Project</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Profile Modal -->
+    <div id="userProfileModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalUserName">User Profile</h3>
+                <button class="close-btn" onclick="closeUserProfileModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="profile-header">
+                    <div class="profile-avatar" id="modalUserAvatar">?</div>
+                    <div class="profile-info">
+                        <h3 id="modalUserNameDisplay">User Name</h3>
+                        <div class="profile-stats">
+                            <span>Projects: <strong id="modalProjectCount">0</strong></span>
+                        </div>
+                        <div class="friend-status" id="friendStatus">
+                            <!-- Friend status buttons will be shown here -->
+                        </div>
+                    </div>
+                </div>
+                <h4>Projects by this user:</h4>
+                <div id="modalUserProjects" class="grid grid-1" style="margin-top: 1rem;">
+                    <!-- User's projects will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Container -->
+    <div id="notification" class="notification"></div>
+
+    <script>
+        // Global Variables
+        let currentUser = null;
+        let allProjects = [];
+        let currentSupportProject = null;
+        let currentViewingUser = null;
+
+        // Initialize Application
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+            loadProjects();
+            loadUserData();
+            
+            // Add fade-in animation to elements
+            setTimeout(() => {
+                document.querySelectorAll('.fade-in').forEach(el => {
+                    el.classList.add('visible');
+                });
+            }, 100);
+        });
+
+        // Initialize App
+        function initializeApp() {
+            // Initialize localStorage structure if not exists
+            if (!localStorage.getItem('foundersphere_users')) {
+                localStorage.setItem('foundersphere_users', JSON.stringify([]));
+            }
+            if (!localStorage.getItem('foundersphere_projects')) {
+                localStorage.setItem('foundersphere_projects', JSON.stringify([]));
+            }
+            if (!localStorage.getItem('foundersphere_friendships')) {
+                localStorage.setItem('foundersphere_friendships', JSON.stringify([]));
+            }
+            if (!localStorage.getItem('foundersphere_friend_requests')) {
+                localStorage.setItem('foundersphere_friend_requests', JSON.stringify([]));
+            }
+            if (!localStorage.getItem('foundersphere_support_transactions')) {
+                localStorage.setItem('foundersphere_support_transactions', JSON.stringify([]));
+            }
+
+            // Simulate logged in user (you can modify this to integrate with your auth system)
+            currentUser = getCurrentUser();
+            if (currentUser) {
+                updateUserDisplay();
+            } else {
+                // If no current user, redirect to login page
+                window.location.href = 'Login.html';
+            }
+        }
+
+        // Get Current User (modify this to integrate with your auth system)
+        function getCurrentUser() {
+            const loggedInUserEmail = sessionStorage.getItem('loggedInUserEmail');
+            if (!loggedInUserEmail) {
+                return null; // No user logged in
+            }
+
+            const users = JSON.parse(localStorage.getItem('foundersphere_users'));
+            const user = users.find(u => u.email === loggedInUserEmail);
+            
+            // If user found, ensure necessary properties exist
+            if (user) {
+                if (!user.projects) user.projects = [];
+                if (!user.friends) user.friends = [];
+                if (!user.likedProjects) user.likedProjects = [];
+            }
+            return user;
+        }
+
+        // Update User Display
+        function updateUserDisplay() {
+            if (currentUser) {
+                document.getElementById('userName').textContent = currentUser.username || currentUser.fullName;
+                document.getElementById('userAvatar').textContent = (currentUser.username || currentUser.fullName).charAt(0).toUpperCase();
+                document.getElementById('profileName').textContent = currentUser.username || currentUser.fullName;
+                document.getElementById('profileAvatar').textContent = (currentUser.username || currentUser.fullName).charAt(0).toUpperCase();
+            }
+        }
+
+        // Load User Data
+        function loadUserData() {
+            if (!currentUser) return;
+            
+            const projects = JSON.parse(localStorage.getItem('foundersphere_projects'));
+            const userProjects = projects.filter(p => p.authorId === currentUser.id);
+            
+            document.getElementById('projectCount').textContent = userProjects.length;
+            document.getElementById('friendCount').textContent = currentUser.friends ? currentUser.friends.length : 0;
+            document.getElementById('likesGiven').textContent = currentUser.likedProjects ? currentUser.likedProjects.length : 0;
+            
+            loadMyProjects();
+            loadProfileProjects();
+            loadFriends();
+        }
+
+        // Tab Management
+        function switchTab(tabName, event) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab content
+            document.getElementById(tabName + '-tab').classList.add('active');
+            
+            // Add active class to clicked tab button
+            if (event && event.target) {
+                event.target.classList.add('active');
+            } else {
+                // Fallback for initial load or direct calls without an event
+                document.querySelector(`.tab-btn[onclick*="switchTab('${tabName}')"]`).classList.add('active');
+            }
+            
+            // Load data for specific tabs
+            if (tabName === 'projects') {
+                loadProjects();
+            } else if (tabName === 'my-projects') {
+                loadMyProjects();
+            } else if (tabName === 'friends') {
+                loadFriends();
+            } else if (tabName === 'profile') {
+                loadProfileProjects();
+            }
+        }
+
+        // Project Management
+        function submitProject(event) {
+            event.preventDefault();
+            
+            if (!currentUser) {
+                showNotification('Please log in to submit a project', 'error');
+                return;
+            }
+
+            const title = document.getElementById('projectTitle').value.trim();
+            const category = document.getElementById('projectCategory').value;
+            const description = document.getElementById('projectDescription').value.trim();
+            const fundingGoal = document.getElementById('fundingGoal').value || 0;
+
+            if (!title || !category || !description) {
+                showNotification('Please fill in all required fields', 'error');
+                return;
+            }
+
+            const project = {
+                id: 'project_' + Date.now(),
+                title: title,
+                category: category,
+                description: description,
+                fundingGoal: parseInt(fundingGoal),
+                authorId: currentUser.id,
+                authorName: currentUser.username || currentUser.fullName,
+                createdAt: new Date().toISOString(),
+                likes: 0,
+                likedBy: [],
+                supporters: [],
+                totalSupport: 0
+            };
+
+            // Save project
+            const projects = JSON.parse(localStorage.getItem('foundersphere_projects'));
+            projects.push(project);
+            localStorage.setItem('foundersphere_projects', JSON.stringify(projects));
+
+            // Update user's projects list
+            if (!currentUser.projects) currentUser.projects = [];
+            currentUser.projects.push(project.id);
+            updateCurrentUser();
+
+            // Clear form
+            document.getElementById('projectForm').reset();
+
+            showNotification('Project submitted successfully!', 'success');
+            
+            // Switch to projects tab
+            switchTab('projects');
+        }
+
+        // Load Projects
+        function loadProjects() {
+            const projects = JSON.parse(localStorage.getItem('foundersphere_projects'));
+            allProjects = projects;
+            filterProjects(); // Call filterProjects to display and sort/filter initially
+        }
+
+        // Display Projects
+        function displayProjects(projects) {
+            const grid = document.getElementById('projectsGrid');
+            
+            if (projects.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <h3>No Projects Found</h3>
+                        <p>Be the first to share your innovative idea!</p>
+                        <button class="btn btn-primary" onclick="switchTab('submit', event)">Submit Project</button>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = projects.map(project => `
+                <div class="card project-card fade-in">
+                    <div class="project-category">${project.category}</div>
+                    <div class="card-body">
+                        <h3 class="project-title">${project.title}</h3>
+                        <div class="project-author">
+                            by <a href="#" onclick="viewUserProfile('${project.authorId}')" 
+                               style="color: var(--primary-color); text-decoration: none;">
+                               ${project.authorName}
+                            </a>
+                        </div>
+                        <p class="project-description">${project.description}</p>
+                        ${project.fundingGoal > 0 ? `
+                            <div style="margin: 1rem 0; padding: 1rem; background: var(--light-bg); border-radius: 10px;">
+                                <strong>Funding Goal: $${project.fundingGoal.toLocaleString()}</strong>
+                                <div style="margin-top: 0.5rem; color: var(--success-color);">
+                                    Raised: $${project.totalSupport ? project.totalSupport.toLocaleString() : 0}
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                    <div class="card-footer">
+                        <div class="project-actions">
+                            <button class="like-btn ${currentUser && project.likedBy.includes(currentUser.id) ? 'liked' : ''}" 
+                                    onclick="toggleLike('${project.id}')" 
+                                    ${!currentUser ? 'disabled' : ''}>
+                                ❤️ <span>${project.likes}</span>
+                            </button>
+                            ${currentUser && currentUser.id !== project.authorId ? `
+                                <button class="support-btn btn-sm" onclick="openSupportModal('${project.id}')">
+                                    💰 Support
+                                </button>
+                            ` : ''}
+                            <small style="color: var(--accent-color);">
+                                ${new Date(project.createdAt).toLocaleDateString()}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            // Animate new elements
+            setTimeout(() => {
+                grid.querySelectorAll('.fade-in').forEach(el => {
+                    el.classList.add('visible');
+                });
+            }, 100);
+        }
+
+        // Filter Projects
+        function filterProjects() {
+            const categoryFilter = document.getElementById('categoryFilter').value;
+            const sortFilter = document.getElementById('sortFilter').value;
+            
+            let filteredProjects = [...allProjects];
+            
+            // Apply category filter
+            if (categoryFilter) {
+                filteredProjects = filteredProjects.filter(p => p.category === categoryFilter);
+            }
+            
+            // Apply sorting
+            switch (sortFilter) {
+                case 'newest':
+                    filteredProjects.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                    break;
+                case 'oldest':
+                    filteredProjects.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+                    break;
+                case 'mostLiked':
+                    filteredProjects.sort((a, b) => b.likes - a.likes);
+                    break;
+                case 'leastLiked':
+                    filteredProjects.sort((a, b) => a.likes - b.likes);
+                    break;
+            }
+            
+            displayProjects(filteredProjects);
+        }
+
+        // Toggle Like
+        function toggleLike(projectId) {
+            if (!currentUser) {
+                showNotification('Please log in to like projects', 'error');
+                return;
+            }
+
+            const projects = JSON.parse(localStorage.getItem('foundersphere_projects'));
+            const projectIndex = projects.findIndex(p => p.id === projectId);
+            
+            if (projectIndex === -1) return;
+            
+            const project = projects[projectIndex];
+            
+            if (!project.likedBy) project.likedBy = [];
+            if (!currentUser.likedProjects) currentUser.likedProjects = [];
+            
+            if (project.likedBy.includes(currentUser.id)) {
+                // Remove like
+                project.likedBy = project.likedBy.filter(id => id !== currentUser.id);
+                project.likes = Math.max(0, project.likes - 1);
+                currentUser.likedProjects = currentUser.likedProjects.filter(id => id !== projectId);
+                showNotification('Like removed', 'warning');
+            } else {
+                // Add like
+                project.likedBy.push(currentUser.id);
+                project.likes = (project.likes || 0) + 1;
+                currentUser.likedProjects.push(projectId);
+                showNotification('Project liked!', 'success');
+            }
+            
+            // Save changes
+            projects[projectIndex] = project;
+            localStorage.setItem('foundersphere_projects', JSON.stringify(projects));
+            updateCurrentUser();
+            
+            // Refresh current view
+            allProjects = projects;
+            filterProjects();
+            loadUserData();
+        }
+
+        // Load My Projects
+        function loadMyProjects() {
+            if (!currentUser) {
+                document.getElementById('myProjectsGrid').innerHTML = `
+                    <div class="empty-state">
+                        <h3>Please Log In</h3>
+                        <p>Log in to view your projects</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const projects = JSON.parse(localStorage.getItem('foundersphere_projects'));
+            const userProjects = projects.filter(p => p.authorId === currentUser.id);
+            
+            displayUserProjects(userProjects, 'myProjectsGrid');
+        }
+
+        // Load Profile Projects
+        function loadProfileProjects() {
+            if (!currentUser) return;
+            
+            const projects = JSON.parse(localStorage.getItem('foundersphere_projects'));
+            const userProjects = projects.filter(p => p.authorId === currentUser.id);
+            
+            displayUserProjects(userProjects, 'profileProjects');
+        }
+
+        // Display User Projects
+        function displayUserProjects(projects, containerId) {
+            const container = document.getElementById(containerId);
+            
+            if (projects.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <h3>No Projects Yet</h3>
+                        <p>Share your first project idea with the community!</p>
+                        <button class="btn btn-primary" onclick="switchTab('submit', event)">Submit Project</button>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = projects.map(project => `
+                <div class="card project-card fade-in">
+                    <div class="project-category">${project.category}</div>
+                    <div class="card-body">
+                        <h3 class="project-title">${project.title}</h3>
+                        <p class="project-description">${project.description}</p>
+                        <div style="margin-top: 1rem;">
+                            <div style="display: flex; gap: 1rem; align-items: center;">
+                                <span>❤️ ${project.likes || 0} likes</span>
+                                <span>💰 $${project.totalSupport || 0} raised</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <small style="color: var(--accent-color);">
+                            Created: ${new Date(project.createdAt).toLocaleDateString()}
+                        </small>
+                    </div>
+                </div>
+            `).join('');
+            
+            // Animate new elements
+            setTimeout(() => {
+                container.querySelectorAll('.fade-in').forEach(el => {
+                    el.classList.add('visible');
+                });
+            }, 100);
+        }
+
+        // Support System
+        function openSupportModal(projectId) {
+            const projects = JSON.parse(localStorage.getItem('foundersphere_projects'));
+            const project = projects.find(p => p.id === projectId);
+            
+            if (!project) return;
+            
+            currentSupportProject = project;
+            document.getElementById('supportProjectTitle').textContent = project.title;
+            document.getElementById('supportProjectAuthor').textContent = project.authorName;
+            document.getElementById('supportAmount').value = '';
+            document.getElementById('supportMessage').value = '';
+            document.getElementById('supportModal').classList.add('show');
+        }
+
+        function closeSupportModal() {
+            document.getElementById('supportModal').classList.remove('show');
+            currentSupportProject = null;
+        }
+
+        function processSupportPayment() {
+            const amount = parseInt(document.getElementById('supportAmount').value);
+            const message = document.getElementById('supportMessage').value.trim();
+            
+            if (!amount || amount < 1) {
+                showNotification('Please enter a valid amount', 'error');
+                return;
+            }
+            
+            if (!currentUser) {
+                showNotification('Please log in to support projects', 'error');
+                return;
+            }
+
+            // Simulate payment processing
+            const transaction = {
+                id: 'support_' + Date.now(),
+                projectId: currentSupportProject.id,
+                supporterId: currentUser.id,
+                supporterName: currentUser.username || currentUser.fullName,
+                amount: amount,
+                message: message,
+                timestamp: new Date().toISOString()
+            };
+
+            // Save transaction
+            const transactions = JSON.parse(localStorage.getItem('foundersphere_support_transactions'));
+            transactions.push(transaction);
+            localStorage.setItem('foundersphere_support_transactions', JSON.stringify(transactions));
+
+            // Update project
+            const projects = JSON.parse(localStorage.getItem('foundersphere_projects'));
+            const projectIndex = projects.findIndex(p => p.id === currentSupportProject.id);
+            
+            if (projectIndex !== -1) {
+                if (!projects[projectIndex].supporters) projects[projectIndex].supporters = [];
+                if (!projects[projectIndex].totalSupport) projects[projectIndex].totalSupport = 0;
+                
+                projects[projectIndex].supporters.push({
+                    userId: currentUser.id,
+                    userName: currentUser.username || currentUser.fullName,
+                    amount: amount,
+                    message: message,
+                    timestamp: transaction.timestamp
+                });
+                projects[projectIndex].totalSupport += amount;
+                
+                localStorage.setItem('foundersphere_projects', JSON.stringify(projects));
+            }
+
+            showNotification(`Successfully supported "${currentSupportProject.title}" with $${amount}!`, 'success');
+            closeSupportModal();
+            
+            // Refresh projects display
+            allProjects = projects;
+            filterProjects();
+        }
+
+        // Friend System
+        function loadFriends() {
+            if (!currentUser) return;
+            
+            loadFriendRequests();
+            loadFriendsList();
+            loadAllUsers();
+        }
+
+        function loadFriendRequests() {
+            const requests = JSON.parse(localStorage.getItem('foundersphere_friend_requests'));
+            const myRequests = requests.filter(r => r.receiverId === currentUser.id && r.status === 'pending');
+            const container = document.getElementById('friendRequestsList');
+            
+            if (myRequests.length === 0) {
+                container.innerHTML = '<p style="color: var(--accent-color);">No pending friend requests</p>';
+                return;
+            }
+
+            const users = JSON.parse(localStorage.getItem('foundersphere_users'));
+            
+            container.innerHTML = myRequests.map(request => {
+                const sender = users.find(u => u.id === request.senderId);
+                if (!sender) return '';
+                
+                return `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; border: 1px solid var(--border-color); border-radius: 10px; margin-bottom: 1rem;">
+                        <div style="display: flex; align-items: center; gap: 1rem;">
+                            <div class="user-avatar">${(sender.username || sender.fullName).charAt(0).toUpperCase()}</div>
+                            <span>${sender.username || sender.fullName}</span>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn btn-success btn-sm" onclick="handleFriendRequest('${request.id}', 'accept')">Accept</button>
+                            <button class="btn btn-danger btn-sm" onclick="handleFriendRequest('${request.id}', 'decline')">Decline</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function loadFriendsList() {
+            const friendships = JSON.parse(localStorage.getItem('foundersphere_friendships'));
+            const myFriendships = friendships.filter(f => 
+                (f.user1Id === currentUser.id || f.user2Id === currentUser.id) && f.status === 'accepted'
+            );
+            const container = document.getElementById('friendsList');
+            
+            if (myFriendships.length === 0) {
+                container.innerHTML = '<p style="color: var(--accent-color);">No friends yet</p>';
+                return;
+            }
+
+            const users = JSON.parse(localStorage.getItem('foundersphere_users'));
+            
+            container.innerHTML = myFriendships.map(friendship => {
+                const friendId = friendship.user1Id === currentUser.id ? friendship.user2Id : friendship.user1Id;
+                const friend = users.find(u => u.id === friendId);
+                if (!friend) return '';
+                
+                return `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; border: 1px solid var(--border-color); border-radius: 10px; margin-bottom: 1rem;">
+                        <div style="display: flex; align-items: center; gap: 1rem; cursor: pointer;" onclick="viewUserProfile('${friend.id}')">
+                            <div class="user-avatar">${(friend.username || friend.fullName).charAt(0).toUpperCase()}</div>
+                            <span>${friend.username || friend.fullName}</span>
+                        </div>
+                        <button class="btn btn-secondary btn-sm" onclick="viewUserProfile('${friend.id}')">View Profile</button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function searchUsers() {
+            const query = document.getElementById('userSearch').value.toLowerCase().trim();
+            const users = JSON.parse(localStorage.getItem('foundersphere_users'));
+            
+            if (!query) {
+                document.getElementById('searchResults').innerHTML = '';
+                return;
+            }
+            
+            const results = users.filter(u => 
+                u.id !== currentUser.id && 
+                (u.username && u.username.toLowerCase().includes(query) || u.fullName.toLowerCase().includes(query))
+            );
+            
+            displaySearchResults(results);
+        }
+
+        function loadAllUsers() {
+            const users = JSON.parse(localStorage.getItem('foundersphere_users'));
+            const otherUsers = users.filter(u => u.id !== currentUser.id);
+            displaySearchResults(otherUsers.slice(0, 6)); // Show first 6 users
+        }
+
+        function displaySearchResults(users) {
+            const container = document.getElementById('searchResults');
+            
+            if (users.length === 0) {
+                container.innerHTML = '<p style="color: var(--accent-color);">No users found</p>';
+                return;
+            }
+
+            container.innerHTML = users.map(user => {
+                const friendStatus = getFriendshipStatus(user.id);
+                
+                return `
+                    <div class="card">
+                        <div class="card-body" style="text-align: center;">
+                            <div class="user-avatar" style="margin: 0 auto 1rem;">${(user.username || user.fullName).charAt(0).toUpperCase()}</div>
+                            <h4>${user.username || user.fullName}</h4>
+                            <div style="margin-top: 1rem;">
+                                ${friendStatus === 'none' ? `
+                                    <button class="btn btn-primary btn-sm" onclick="sendFriendRequest('${user.id}')">Add Friend</button>
+                                ` : friendStatus === 'pending' ? `
+                                    <button class="btn btn-secondary btn-sm" disabled>Request Sent</button>
+                                ` : `
+                                    <button class="btn btn-success btn-sm" disabled>Friends</button>
+                                `}
+                                <button class="btn btn-secondary btn-sm" onclick="viewUserProfile('${user.id}')">View Profile</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function getFriendshipStatus(userId) {
+            const requests = JSON.parse(localStorage.getItem('foundersphere_friend_requests'));
+            const friendships = JSON.parse(localStorage.getItem('foundersphere_friendships'));
+            
+            // Check if already friends
+            const friendship = friendships.find(f => 
+                ((f.user1Id === currentUser.id && f.user2Id === userId) || 
+                 (f.user1Id === userId && f.user2Id === currentUser.id)) && 
+                f.status === 'accepted'
+            );
+            
+            if (friendship) return 'friends';
+            
+            // Check if request is pending (sent by current user)
+            const requestSent = requests.find(r => 
+                (r.senderId === currentUser.id && r.receiverId === userId && r.status === 'pending')
+            );
+            if (requestSent) return 'pending';
+
+            // Check if request is pending (received by current user)
+            const requestReceived = requests.find(r => 
+                (r.senderId === userId && r.receiverId === currentUser.id && r.status === 'pending')
+            );
+            if (requestReceived) return 'pending_received'; // Special status for received pending requests
+
+            return 'none';
+        }
+
+        function sendFriendRequest(receiverId) {
+            const request = {
+                id: 'request_' + Date.now(),
+                senderId: currentUser.id,
+                senderName: currentUser.username || currentUser.fullName,
+                receiverId: receiverId,
+                status: 'pending',
+                timestamp: new Date().toISOString()
+            };
+
+            const requests = JSON.parse(localStorage.getItem('foundersphere_friend_requests'));
+            requests.push(request);
+            localStorage.setItem('foundersphere_friend_requests', JSON.stringify(requests));
+
+            showNotification('Friend request sent!', 'success');
+            searchUsers(); // Refresh search results
+        }
+
+        function handleFriendRequest(requestId, action) {
+            const requests = JSON.parse(localStorage.getItem('foundersphere_friend_requests'));
+            const requestIndex = requests.findIndex(r => r.id === requestId);
+            
+            if (requestIndex === -1) return;
+            
+            const request = requests[requestIndex];
+            
+            if (action === 'accept') {
+                // Create friendship
+                const friendship = {
+                    id: 'friendship_' + Date.now(),
+                    user1Id: request.senderId,
+                    user2Id: request.receiverId,
+                    status: 'accepted',
+                    timestamp: new Date().toISOString()
+                };
+                
+                const friendships = JSON.parse(localStorage.getItem('foundersphere_friendships'));
+                friendships.push(friendship);
+                localStorage.setItem('foundersphere_friendships', JSON.stringify(friendships));
+
+                // Update friends list for both users
+                const users = JSON.parse(localStorage.getItem('foundersphere_users'));
+                const senderUser = users.find(u => u.id === request.senderId);
+                const receiverUser = users.find(u => u.id === request.receiverId);
+
+                if (senderUser && !senderUser.friends.includes(receiverUser.id)) {
+                    senderUser.friends.push(receiverUser.id);
+                }
+                if (receiverUser && !receiverUser.friends.includes(senderUser.id)) {
+                    receiverUser.friends.push(senderUser.id);
+                }
+                localStorage.setItem('foundersphere_users', JSON.stringify(users));
+                currentUser = receiverUser; // Update current user object if it was the receiver
+                updateCurrentUser(); // Save current user changes
+
+                showNotification(`You are now friends with ${request.senderName}!`, 'success');
+            } else {
+                showNotification('Friend request declined', 'warning');
+            }
+            
+            // Remove the request
+            requests.splice(requestIndex, 1);
+            localStorage.setItem('foundersphere_friend_requests', JSON.stringify(requests));
+            
+            loadFriends();
+            loadUserData(); // Refresh friend count on profile
+        }
+
+        // User Profile Modal
+        function viewUserProfile(userId) {
+            const users = JSON.parse(localStorage.getItem('foundersphere_users'));
+            const user = users.find(u => u.id === userId);
+            
+            if (!user) return;
+            
+            currentViewingUser = user;
+            
+            // Update modal content
+            document.getElementById('modalUserName').textContent = (user.username || user.fullName) + "'s Profile";
+            document.getElementById('modalUserNameDisplay').textContent = user.username || user.fullName;
+            document.getElementById('modalUserAvatar').textContent = (user.username || user.fullName).charAt(0).toUpperCase();
+            
+            // Load user's projects
+            const projects = JSON.parse(localStorage.getItem('foundersphere_projects'));
+            const userProjects = projects.filter(p => p.authorId === userId);
+            document.getElementById('modalProjectCount').textContent = userProjects.length;
+            
+            // Show friend status
+            const friendStatus = getFriendshipStatus(userId);
+            const friendStatusContainer = document.getElementById('friendStatus');
+            
+            if (userId === currentUser.id) {
+                friendStatusContainer.innerHTML = '<span style="color: var(--accent-color);">This is you!</span>';
+            } else if (friendStatus === 'friends') {
+                friendStatusContainer.innerHTML = '<button class="btn btn-success btn-sm" disabled>Friends</button>';
+            } else if (friendStatus === 'pending') {
+                friendStatusContainer.innerHTML = '<button class="btn btn-secondary btn-sm" disabled>Request Sent</button>';
+            } else if (friendStatus === 'pending_received') {
+                const requests = JSON.parse(localStorage.getItem('foundersphere_friend_requests'));
+                const receivedRequest = requests.find(r => r.senderId === userId && r.receiverId === currentUser.id && r.status === 'pending');
+                friendStatusContainer.innerHTML = `
+                    <button class="btn btn-success btn-sm" onclick="handleFriendRequest('${receivedRequest.id}', 'accept')">Accept Request</button>
+                    <button class="btn btn-danger btn-sm" onclick="handleFriendRequest('${receivedRequest.id}', 'decline')">Decline Request</button>
+                `;
+            }
+            else {
+                friendStatusContainer.innerHTML = `<button class="btn btn-primary btn-sm" onclick="sendFriendRequest('${userId}')">Add Friend</button>`;
+            }
+            
+            // Display user's projects
+            const modalProjectsContainer = document.getElementById('modalUserProjects');
+            if (userProjects.length === 0) {
+                modalProjectsContainer.innerHTML = '<p style="color: var(--accent-color);">No projects yet</p>';
+            } else {
+                modalProjectsContainer.innerHTML = userProjects.map(project => `
+                    <div class="card">
+                        <div class="card-body">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                <div style="flex: 1;">
+                                    <h4>${project.title}</h4>
+                                    <span class="project-category" style="position: static; margin-bottom: 0.5rem; display: inline-block;">${project.category}</span>
+                                    <p>${project.description}</p>
+                                    <small style="color: var(--accent-color);">❤️ ${project.likes || 0} likes</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            document.getElementById('userProfileModal').classList.add('show');
+        }
+
+        function closeUserProfileModal() {
+            document.getElementById('userProfileModal').classList.remove('show');
+            currentViewingUser = null;
+        }
+
+        // Utility Functions
+        function updateCurrentUser() {
+            const users = JSON.parse(localStorage.getItem('foundersphere_users'));
+            const userIndex = users.findIndex(u => u.id === currentUser.id);
+            if (userIndex !== -1) {
+                users[userIndex] = currentUser;
+                localStorage.setItem('foundersphere_users', JSON.stringify(users));
+            }
+        }
+
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        function navigateToPage(page) {
+            // This is where you'd integrate with your existing navigation system
+            // For this context, we'll simulate navigation or redirect to main pages
+            if (page === 'home') {
+                window.location.href = 'loggedin_index.html';
+            } else {
+                showNotification(`Navigation to ${page} page would happen here`, 'warning');
+            }
+        }
+
+        // Close modals when clicking outside
+        window.onclick = function(event) {
+            const supportModal = document.getElementById('supportModal');
+            const userProfileModal = document.getElementById('userProfileModal');
+            
+            if (event.target === supportModal) {
+                closeSupportModal();
+            }
+            if (event.target === userProfileModal) {
+                closeUserProfileModal();
+            }
+        }
+        // Toggle logout menu visibility when clicking avatar
+        const userAvatar = document.getElementById('userAvatar');
+const logoutMenu = document.getElementById('logoutMenu');
+const logoutBtn = document.getElementById('logoutBtn');
+
+userAvatar.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isVisible = logoutMenu.style.display === 'block';
+    logoutMenu.style.display = isVisible ? 'none' : 'block';
+    userAvatar.setAttribute('aria-expanded', !isVisible);
+});
+
+// Hide logout menu if clicking outside
+document.addEventListener('click', () => {
+    logoutMenu.style.display = 'none';
+    userAvatar.setAttribute('aria-expanded', 'false');
+});
+
+// Logout button click handler
+logoutBtn.addEventListener('click', () => {
+    // Clear sessionStorage login info
+    sessionStorage.removeItem('loggedInUser Email');
+    // Optionally clear other session data if any
+
+    // Redirect to login page
+    window.location.href = 'Login.html';
+});
+    </script>
+</body>
+</html>
