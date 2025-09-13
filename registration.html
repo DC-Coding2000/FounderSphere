@@ -365,6 +365,18 @@
   <section class="registration">
     <div class="registration-container">
       <h2>Register Your Profile</h2>
+      <!-- New: User Type Selection -->
+      <div class="form-group" style="text-align: center; margin-bottom: 1.5rem;">
+        <label style="display: inline-block; margin-right: 1rem;">
+          <input type="radio" id="userTypeMentor" name="userType" value="mentor" required>
+          Register as a Mentor
+        </label>
+        <label style="display: inline-block;">
+          <input type="radio" id="userTypeStudent" name="userType" value="student" checked required>
+          Register as a Student
+        </label>
+      </div>
+      <!-- End New: User Type Selection -->
       <form id="registrationForm" novalidate>
         <div class="form-group">
           <label for="fullName">Full Name *</label>
@@ -479,6 +491,7 @@
       const password = form.password.value;
       const age = Number(form.age.value);
       const gender = form.gender.value;
+      const userType = document.querySelector('input[name="userType"]:checked').value; // Get selected user type
 
       if (!fullName) {
         showFeedback('Please enter your full name.');
@@ -529,10 +542,13 @@
           password: password, // For demo only; do NOT store plain passwords in production
           age: age,
           gender: gender,
+          userType: userType, // Store user type
           joinDate: new Date().toISOString(),
           projects: [], // Initialize empty projects array
           friends: [], // Initialize empty friends array
-          likedProjects: [] // Initialize empty likedProjects array
+          likedProjects: [], // Initialize empty likedProjects array
+          mentors: [], // New: for students to track their mentors
+          students: [] // New: for mentors to track their students
         };
 
         saveUserToLocalStorage(user);
