@@ -598,6 +598,68 @@
             opacity: 1;
             transform: translateY(0);
         }
+
+        /* Chat Modal Specific Styles */
+        #chatModal .modal-content {
+            max-width: 600px;
+            height: 80vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #chatMessages {
+            flex-grow: 1;
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .chat-message {
+            padding: 0.5rem 1rem;
+            border-radius: 15px;
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+
+        .chat-message.sent {
+            background: var(--primary-color);
+            color: var(--white);
+            align-self: flex-end;
+            border-bottom-right-radius: 5px;
+        }
+
+        .chat-message.received {
+            background: var(--light-bg);
+            color: var(--secondary-color);
+            align-self: flex-start;
+            border-bottom-left-radius: 5px;
+        }
+
+        #chatInputContainer {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        #chatInput {
+            flex-grow: 1;
+            border-radius: 25px;
+            padding: 0.8rem 1.2rem;
+            border: 1px solid var(--border-color);
+        }
+
+        #sendChatBtn {
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            background: var(--primary-color);
+            color: var(--white);
+            border: none;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -651,9 +713,9 @@
         <!-- Tab Navigation -->
         <div class="tab-nav fade-in">
             <button class="tab-btn active" onclick="switchTab('projects', event)">All Projects</button>
-            <button class="tab-btn" onclick="switchTab('submit', event)">Submit Project</button>
-            <button class="tab-btn" onclick="switchTab('my-projects', event)">My Projects</button>
             <button class="tab-btn" onclick="switchTab('friends', event)">Friends</button>
+            <button class="tab-btn" id="mentorshipRequestsTabBtn" style="display: none;" onclick="switchTab('mentorship-requests', event)">Mentorship Requests</button>
+            <button class="tab-btn" id="chatsTabBtn" style="display: none;" onclick="switchTab('chats', event)">Chats</button>
             <button class="tab-btn" onclick="switchTab('profile', event)">My Profile</button>
         </div>
 
@@ -783,6 +845,34 @@
             </div>
         </div>
 
+        <!-- Mentorship Requests Tab (New) -->
+        <div id="mentorship-requests-tab" class="tab-content fade-in">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Incoming Mentorship Requests</h3>
+                </div>
+                <div class="card-body">
+                    <div id="incomingMentorshipRequestsList">
+                        <!-- Incoming mentorship requests will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chats Tab (New) -->
+        <div id="chats-tab" class="tab-content fade-in">
+            <div class="card">
+                <div class="card-header">
+                    <h3>My Chats</h3>
+                </div>
+                <div class="card-body">
+                    <div id="chatSessionsList">
+                        <!-- Chat sessions will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Profile Tab -->
         <div id="profile-tab" class="tab-content fade-in">
             <div class="card">
@@ -795,6 +885,7 @@
                                 <span>Projects: <strong id="projectCount">0</strong></span>
                                 <span>Friends: <strong id="friendCount">0</strong></span>
                                 <span>Likes Given: <strong id="likesGiven">0</strong></span>
+                                <span id="mentorStudentCount" style="display: none;"></span>
                             </div>
                         </div>
                     </div>
@@ -852,11 +943,33 @@
                         <div class="friend-status" id="friendStatus">
                             <!-- Friend status buttons will be shown here -->
                         </div>
+                        <div class="mentorship-status" id="mentorshipStatus" style="margin-top: 1rem;">
+                            <!-- Mentorship status buttons will be shown here -->
+                        </div>
                     </div>
                 </div>
                 <h4>Projects by this user:</h4>
                 <div id="modalUserProjects" class="grid grid-1" style="margin-top: 1rem;">
                     <!-- User's projects will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chat Modal (New) -->
+    <div id="chatModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="chatModalTitle">Chat</h3>
+                <button class="close-btn" onclick="closeChatModal()">&times;</button>
+            </div>
+            <div class="modal-body" style="display: flex; flex-direction: column; flex-grow: 1;">
+                <div id="chatMessages">
+                    <!-- Chat messages will be loaded here -->
+                </div>
+                <div id="chatInputContainer">
+                    <input type="text" id="chatInput" class="form-control" placeholder="Type your message...">
+                    <button id="sendChatBtn" class="btn btn-primary">Send</button>
                 </div>
             </div>
         </div>
@@ -871,6 +984,7 @@
         let allProjects = [];
         let currentSupportProject = null;
         let currentViewingUser = null;
+        let activeChatSessionId = null;
 
         // Initialize Application
         document.addEventListener('DOMContentLoaded', function() {
@@ -884,6 +998,14 @@
                     el.classList.add('visible');
                 });
             }, 100);
+
+            // Event listener for sending chat messages
+            document.getElementById('sendChatBtn').addEventListener('click', sendChatMessage);
+            document.getElementById('chatInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendChatMessage();
+                }
+            });
         });
 
         // Initialize App
@@ -904,11 +1026,19 @@
             if (!localStorage.getItem('foundersphere_support_transactions')) {
                 localStorage.setItem('foundersphere_support_transactions', JSON.stringify([]));
             }
+            // New: Mentorship requests and chat sessions
+            if (!localStorage.getItem('foundersphere_mentorship_requests')) {
+                localStorage.setItem('foundersphere_mentorship_requests', JSON.stringify([]));
+            }
+            if (!localStorage.getItem('foundersphere_chat_sessions')) {
+                localStorage.setItem('foundersphere_chat_sessions', JSON.stringify([]));
+            }
 
             // Simulate logged in user (you can modify this to integrate with your auth system)
             currentUser = getCurrentUser();
             if (currentUser) {
                 updateUserDisplay();
+                updateDynamicTabs(); // New: Show/hide tabs based on user type
             } else {
                 // If no current user, redirect to login page
                 window.location.href = 'login.html';
@@ -930,6 +1060,9 @@
                 if (!user.projects) user.projects = [];
                 if (!user.friends) user.friends = [];
                 if (!user.likedProjects) user.likedProjects = [];
+                if (!user.userType) user.userType = 'student'; // Default to student if not set
+                if (!user.mentors) user.mentors = []; // New
+                if (!user.students) user.students = []; // New
             }
             return user;
         }
@@ -942,6 +1075,26 @@
                 document.getElementById('profileName').textContent = currentUser.username || currentUser.fullName;
                 document.getElementById('profileAvatar').textContent = (currentUser.username || currentUser.fullName).charAt(0).toUpperCase();
             }
+        }
+
+        // New: Update visibility of dynamic tabs based on user type
+        function updateDynamicTabs() {
+            if (!currentUser) return;
+
+            const mentorshipRequestsTabBtn = document.getElementById('mentorshipRequestsTabBtn');
+            const chatsTabBtn = document.getElementById('chatsTabBtn');
+            const mentorStudentCount = document.getElementById('mentorStudentCount');
+
+            if (currentUser.userType === 'student') {
+                mentorshipRequestsTabBtn.style.display = 'inline-block';
+                mentorStudentCount.textContent = `Mentors: ${currentUser.mentors ? currentUser.mentors.length : 0}`;
+                mentorStudentCount.style.display = 'inline-block';
+            } else if (currentUser.userType === 'mentor') {
+                mentorshipRequestsTabBtn.style.display = 'none'; // Mentors don't receive requests, they send them
+                mentorStudentCount.textContent = `Students: ${currentUser.students ? currentUser.students.length : 0}`;
+                mentorStudentCount.style.display = 'inline-block';
+            }
+            chatsTabBtn.style.display = 'inline-block'; // Chats visible for both
         }
 
         // Load User Data
@@ -958,6 +1111,9 @@
             loadMyProjects();
             loadProfileProjects();
             loadFriends();
+            loadMentorshipRequests(); // New
+            loadChatSessions(); // New
+            updateDynamicTabs(); // Update counts in profile
         }
 
         // Tab Management
@@ -980,7 +1136,8 @@
                 event.target.classList.add('active');
             } else {
                 // Fallback for initial load or direct calls without an event
-                document.querySelector(`.tab-btn[onclick*="switchTab('${tabName}')"]`).classList.add('active');
+                const targetBtn = document.querySelector(`.tab-btn[onclick*="switchTab('${tabName}')"]`);
+                if (targetBtn) targetBtn.classList.add('active');
             }
             
             // Load data for specific tabs
@@ -992,6 +1149,10 @@
                 loadFriends();
             } else if (tabName === 'profile') {
                 loadProfileProjects();
+            } else if (tabName === 'mentorship-requests') { // New
+                loadMentorshipRequests();
+            } else if (tabName === 'chats') { // New
+                loadChatSessions();
             }
         }
 
@@ -1001,6 +1162,10 @@
             
             if (!currentUser) {
                 showNotification('Please log in to submit a project', 'error');
+                return;
+            }
+            if (currentUser.userType === 'mentor') {
+                showNotification('Mentors cannot submit projects.', 'error');
                 return;
             }
 
@@ -1022,6 +1187,7 @@
                 fundingGoal: parseInt(fundingGoal),
                 authorId: currentUser.id,
                 authorName: currentUser.username || currentUser.fullName,
+                authorType: currentUser.userType, // Store author type
                 createdAt: new Date().toISOString(),
                 likes: 0,
                 likedBy: [],
@@ -1064,13 +1230,21 @@
                     <div class="empty-state">
                         <h3>No Projects Found</h3>
                         <p>Be the first to share your innovative idea!</p>
-                        <button class="btn btn-primary" onclick="switchTab('submit', event)">Submit Project</button>
+                        ${currentUser && currentUser.userType === 'student' ? `<button class="btn btn-primary" onclick="switchTab('submit', event)">Submit Project</button>` : ''}
                     </div>
                 `;
                 return;
             }
 
-            grid.innerHTML = projects.map(project => `
+            grid.innerHTML = projects.map(project => {
+                const isLiked = currentUser && project.likedBy.includes(currentUser.id);
+                const isAuthor = currentUser && currentUser.id === project.authorId;
+                const isMentor = currentUser && currentUser.userType === 'mentor';
+                const isStudentProject = project.authorType === 'student';
+                const hasRequestedMentorship = getMentorshipStatus(project.authorId) === 'pending';
+                const isMentoring = currentUser && currentUser.userType === 'mentor' && currentUser.students.includes(project.authorId);
+
+                return `
                 <div class="card project-card fade-in">
                     <div class="project-category">${project.category}</div>
                     <div class="card-body">
@@ -1078,7 +1252,7 @@
                         <div class="project-author">
                             by <a href="#" onclick="viewUserProfile('${project.authorId}')" 
                                style="color: var(--primary-color); text-decoration: none;">
-                               ${project.authorName}
+                               ${project.authorName} (${project.authorType})
                             </a>
                         </div>
                         <p class="project-description">${project.description}</p>
@@ -1093,15 +1267,24 @@
                     </div>
                     <div class="card-footer">
                         <div class="project-actions">
-                            <button class="like-btn ${currentUser && project.likedBy.includes(currentUser.id) ? 'liked' : ''}" 
+                            <button class="like-btn ${isLiked ? 'liked' : ''}" 
                                     onclick="toggleLike('${project.id}')" 
                                     ${!currentUser ? 'disabled' : ''}>
                                 ❤️ <span>${project.likes}</span>
                             </button>
-                            ${currentUser && currentUser.id !== project.authorId ? `
+                            ${currentUser && !isAuthor ? `
                                 <button class="support-btn btn-sm" onclick="openSupportModal('${project.id}')">
                                     💰 Support
                                 </button>
+                            ` : ''}
+                            ${isMentor && isStudentProject && !isAuthor && !hasRequestedMentorship && !isMentoring ? `
+                                <button class="btn btn-primary btn-sm" onclick="sendMentorshipRequest('${project.authorId}', '${project.id}')">
+                                    Ask for Mentoring
+                                </button>
+                            ` : isMentor && isStudentProject && !isAuthor && hasRequestedMentorship ? `
+                                <button class="btn btn-secondary btn-sm" disabled>Request Sent</button>
+                            ` : isMentor && isStudentProject && !isAuthor && isMentoring ? `
+                                <button class="btn btn-success btn-sm" disabled>Mentoring</button>
                             ` : ''}
                             <small style="color: var(--accent-color);">
                                 ${new Date(project.createdAt).toLocaleDateString()}
@@ -1109,7 +1292,7 @@
                         </div>
                     </div>
                 </div>
-            `).join('');
+            `}).join('');
             
             // Animate new elements
             setTimeout(() => {
@@ -1203,6 +1386,15 @@
                 `;
                 return;
             }
+            if (currentUser.userType === 'mentor') {
+                document.getElementById('myProjectsGrid').innerHTML = `
+                    <div class="empty-state">
+                        <h3>Mentors do not have projects</h3>
+                        <p>You can mentor students and connect with other founders.</p>
+                    </div>
+                `;
+                return;
+            }
 
             const projects = JSON.parse(localStorage.getItem('foundersphere_projects'));
             const userProjects = projects.filter(p => p.authorId === currentUser.id);
@@ -1229,7 +1421,7 @@
                     <div class="empty-state">
                         <h3>No Projects Yet</h3>
                         <p>Share your first project idea with the community!</p>
-                        <button class="btn btn-primary" onclick="switchTab('submit', event)">Submit Project</button>
+                        ${currentUser && currentUser.userType === 'student' ? `<button class="btn btn-primary" onclick="switchTab('submit', event)">Submit Project</button>` : ''}
                     </div>
                 `;
                 return;
@@ -1407,7 +1599,10 @@
                             <div class="user-avatar">${(friend.username || friend.fullName).charAt(0).toUpperCase()}</div>
                             <span>${friend.username || friend.fullName}</span>
                         </div>
-                        <button class="btn btn-secondary btn-sm" onclick="viewUserProfile('${friend.id}')">View Profile</button>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn btn-secondary btn-sm" onclick="viewUserProfile('${friend.id}')">View Profile</button>
+                            <button class="btn btn-primary btn-sm" onclick="openChatSession('${friend.id}', 'friend')">Chat</button>
+                        </div>
                     </div>
                 `;
             }).join('');
@@ -1451,7 +1646,7 @@
                     <div class="card">
                         <div class="card-body" style="text-align: center;">
                             <div class="user-avatar" style="margin: 0 auto 1rem;">${(user.username || user.fullName).charAt(0).toUpperCase()}</div>
-                            <h4>${user.username || user.fullName}</h4>
+                            <h4>${user.username || user.fullName} (${user.userType})</h4>
                             <div style="margin-top: 1rem;">
                                 ${friendStatus === 'none' ? `
                                     <button class="btn btn-primary btn-sm" onclick="sendFriendRequest('${user.id}')">Add Friend</button>
@@ -1564,6 +1759,321 @@
             loadUserData(); // Refresh friend count on profile
         }
 
+        // New: Mentorship System
+        function getMentorshipStatus(studentId) {
+            const requests = JSON.parse(localStorage.getItem('foundersphere_mentorship_requests'));
+            const users = JSON.parse(localStorage.getItem('foundersphere_users'));
+            const studentUser = users.find(u => u.id === studentId);
+
+            if (!currentUser || !studentUser) return 'none';
+
+            // Check if already mentoring
+            if (currentUser.userType === 'mentor' && currentUser.students.includes(studentId)) {
+                return 'mentoring';
+            }
+            // Check if student is already being mentored by current user
+            if (currentUser.userType === 'student' && currentUser.mentors.includes(studentId)) {
+                return 'mentoring_by_me'; // This case is for student viewing mentor's profile
+            }
+
+            // Check if a request is pending from current mentor to this student
+            const requestSent = requests.find(r =>
+                r.mentorId === currentUser.id && r.studentId === studentId && r.status === 'pending'
+            );
+            if (requestSent) return 'pending';
+
+            // Check if a request is pending from this mentor to current student (for student's view)
+            const requestReceived = requests.find(r =>
+                r.mentorId === studentId && r.studentId === currentUser.id && r.status === 'pending'
+            );
+            if (requestReceived) return 'pending_received';
+
+            return 'none';
+        }
+
+        function sendMentorshipRequest(studentId, projectId) {
+            if (!currentUser || currentUser.userType !== 'mentor') {
+                showNotification('Only mentors can send mentorship requests.', 'error');
+                return;
+            }
+            if (currentUser.id === studentId) {
+                showNotification('You cannot request to mentor yourself.', 'error');
+                return;
+            }
+
+            const requests = JSON.parse(localStorage.getItem('foundersphere_mentorship_requests'));
+            const existingRequest = requests.find(r =>
+                r.mentorId === currentUser.id && r.studentId === studentId && r.status === 'pending'
+            );
+
+            if (existingRequest) {
+                showNotification('Mentorship request already sent to this student.', 'warning');
+                return;
+            }
+
+            const request = {
+                id: 'mentorship_request_' + Date.now(),
+                mentorId: currentUser.id,
+                mentorName: currentUser.username || currentUser.fullName,
+                studentId: studentId,
+                studentName: currentViewingUser ? (currentViewingUser.username || currentViewingUser.fullName) : 'Unknown Student', // Try to get name from currentViewingUser if modal is open
+                projectId: projectId, // The project the mentor is interested in
+                status: 'pending',
+                timestamp: new Date().toISOString()
+            };
+
+            requests.push(request);
+            localStorage.setItem('foundersphere_mentorship_requests', JSON.stringify(requests));
+            showNotification('Mentorship request sent!', 'success');
+            
+            // Refresh projects or user profile if open
+            filterProjects();
+            if (document.getElementById('userProfileModal').classList.contains('show')) {
+                viewUserProfile(studentId);
+            }
+        }
+
+        function loadMentorshipRequests() {
+            if (!currentUser || currentUser.userType !== 'student') {
+                document.getElementById('incomingMentorshipRequestsList').innerHTML = `
+                    <div class="empty-state">
+                        <h3>Only students receive mentorship requests.</h3>
+                        <p>Mentors can browse projects and send requests.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const requests = JSON.parse(localStorage.getItem('foundersphere_mentorship_requests'));
+            const myIncomingRequests = requests.filter(r => r.studentId === currentUser.id && r.status === 'pending');
+            const container = document.getElementById('incomingMentorshipRequestsList');
+
+            if (myIncomingRequests.length === 0) {
+                container.innerHTML = '<p style="color: var(--accent-color);">No pending mentorship requests.</p>';
+                return;
+            }
+
+            const users = JSON.parse(localStorage.getItem('foundersphere_users'));
+            const projects = JSON.parse(localStorage.getItem('foundersphere_projects'));
+
+            container.innerHTML = myIncomingRequests.map(request => {
+                const mentor = users.find(u => u.id === request.mentorId);
+                const project = projects.find(p => p.id === request.projectId);
+                if (!mentor) return '';
+
+                return `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; border: 1px solid var(--border-color); border-radius: 10px; margin-bottom: 1rem;">
+                        <div style="display: flex; align-items: center; gap: 1rem;">
+                            <div class="user-avatar">${(mentor.username || mentor.fullName).charAt(0).toUpperCase()}</div>
+                            <span>${mentor.username || mentor.fullName} (Mentor)</span>
+                            ${project ? `<br><small>for project: "${project.title}"</small>` : ''}
+                        </div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn btn-success btn-sm" onclick="handleMentorshipRequest('${request.id}', 'accept')">Accept Mentorship</button>
+                            <button class="btn btn-danger btn-sm" onclick="handleMentorshipRequest('${request.id}', 'reject')">Reject Mentorship</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function handleMentorshipRequest(requestId, action) {
+            const requests = JSON.parse(localStorage.getItem('foundersphere_mentorship_requests'));
+            const requestIndex = requests.findIndex(r => r.id === requestId);
+
+            if (requestIndex === -1) return;
+
+            const request = requests[requestIndex];
+            const users = JSON.parse(localStorage.getItem('foundersphere_users'));
+            const mentorUser = users.find(u => u.id === request.mentorId);
+            const studentUser = users.find(u => u.id === request.studentId);
+
+            if (!mentorUser || !studentUser) {
+                showNotification('User data not found for mentorship request.', 'error');
+                return;
+            }
+
+            if (action === 'accept') {
+                // Add to mentor's students list
+                if (!mentorUser.students.includes(studentUser.id)) {
+                    mentorUser.students.push(studentUser.id);
+                }
+                // Add to student's mentors list
+                if (!studentUser.mentors.includes(mentorUser.id)) {
+                    studentUser.mentors.push(mentorUser.id);
+                }
+
+                // Update users in localStorage
+                const updatedUsers = users.map(u => {
+                    if (u.id === mentorUser.id) return mentorUser;
+                    if (u.id === studentUser.id) return studentUser;
+                    return u;
+                });
+                localStorage.setItem('foundersphere_users', JSON.stringify(updatedUsers));
+                currentUser = studentUser; // Update current user object if it was the student
+                updateCurrentUser(); // Save current user changes
+
+                // Create a chat session
+                createChatSession(mentorUser.id, studentUser.id, 'mentorship');
+
+                request.status = 'accepted';
+                showNotification(`Mentorship with ${mentorUser.username || mentorUser.fullName} accepted! Chat initiated.`, 'success');
+            } else {
+                request.status = 'rejected';
+                showNotification(`Mentorship request from ${mentorUser.username || mentorUser.fullName} rejected.`, 'warning');
+            }
+
+            // Update request status
+            requests[requestIndex] = request;
+            localStorage.setItem('foundersphere_mentorship_requests', JSON.stringify(requests));
+
+            loadMentorshipRequests();
+            loadUserData(); // Refresh profile counts and chat sessions
+        }
+
+        // New: Chat System
+        function createChatSession(user1Id, user2Id, type) {
+            const chatSessions = JSON.parse(localStorage.getItem('foundersphere_chat_sessions'));
+            
+            // Check if a session already exists between these two users of this type
+            const existingSession = chatSessions.find(session =>
+                session.type === type &&
+                ((session.participants.includes(user1Id) && session.participants.includes(user2Id)))
+            );
+
+            if (existingSession) {
+                return existingSession.id; // Return existing session ID
+            }
+
+            const newSession = {
+                id: 'chat_' + Date.now(),
+                participants: [user1Id, user2Id],
+                type: type, // 'friend' or 'mentorship'
+                messages: [],
+                createdAt: new Date().toISOString()
+            };
+            chatSessions.push(newSession);
+            localStorage.setItem('foundersphere_chat_sessions', JSON.stringify(chatSessions));
+            return newSession.id;
+        }
+
+        function loadChatSessions() {
+            if (!currentUser) return;
+
+            const chatSessions = JSON.parse(localStorage.getItem('foundersphere_chat_sessions'));
+            const myChatSessions = chatSessions.filter(session =>
+                session.participants.includes(currentUser.id)
+            );
+            const container = document.getElementById('chatSessionsList');
+
+            if (myChatSessions.length === 0) {
+                container.innerHTML = '<p style="color: var(--accent-color);">No active chats.</p>';
+                return;
+            }
+
+            const users = JSON.parse(localStorage.getItem('foundersphere_users'));
+
+            container.innerHTML = myChatSessions.map(session => {
+                const otherParticipantId = session.participants.find(id => id !== currentUser.id);
+                const otherParticipant = users.find(u => u.id === otherParticipantId);
+                if (!otherParticipant) return '';
+
+                const chatName = otherParticipant.username || otherParticipant.fullName;
+                const chatType = session.type === 'mentorship' ? 'Mentorship Chat' : 'Friend Chat';
+                const lastMessage = session.messages.length > 0 ? session.messages[session.messages.length - 1].text : 'No messages yet.';
+
+                return `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; border: 1px solid var(--border-color); border-radius: 10px; margin-bottom: 1rem;">
+                        <div style="display: flex; align-items: center; gap: 1rem;">
+                            <div class="user-avatar">${chatName.charAt(0).toUpperCase()}</div>
+                            <div>
+                                <span>${chatName}</span>
+                                <br><small style="color: var(--accent-color);">${chatType}</small>
+                                <br><small>${lastMessage}</small>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary btn-sm" onclick="openChatModal('${session.id}')">Open Chat</button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function openChatSession(otherUserId, type) {
+            if (!currentUser) {
+                showNotification('Please log in to chat.', 'error');
+                return;
+            }
+            const sessionId = createChatSession(currentUser.id, otherUserId, type);
+            openChatModal(sessionId);
+        }
+
+        function openChatModal(sessionId) {
+            activeChatSessionId = sessionId;
+            const chatSessions = JSON.parse(localStorage.getItem('foundersphere_chat_sessions'));
+            const session = chatSessions.find(s => s.id === sessionId);
+            if (!session) {
+                showNotification('Chat session not found.', 'error');
+                return;
+            }
+
+            const users = JSON.parse(localStorage.getItem('foundersphere_users'));
+            const otherParticipantId = session.participants.find(id => id !== currentUser.id);
+            const otherParticipant = users.find(u => u.id === otherParticipantId);
+
+            document.getElementById('chatModalTitle').textContent = `Chat with ${otherParticipant.username || otherParticipant.fullName}`;
+            renderChatMessages(session.messages);
+            document.getElementById('chatModal').classList.add('show');
+            document.getElementById('chatInput').focus();
+        }
+
+        function closeChatModal() {
+            document.getElementById('chatModal').classList.remove('show');
+            activeChatSessionId = null;
+            document.getElementById('chatInput').value = '';
+            loadChatSessions(); // Refresh chat list when closing modal
+        }
+
+        function renderChatMessages(messages) {
+            const chatMessagesContainer = document.getElementById('chatMessages');
+            chatMessagesContainer.innerHTML = '';
+            messages.forEach(message => {
+                const messageElement = document.createElement('div');
+                messageElement.classList.add('chat-message');
+                messageElement.classList.add(message.senderId === currentUser.id ? 'sent' : 'received');
+                messageElement.textContent = message.text;
+                chatMessagesContainer.appendChild(messageElement);
+            });
+            chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight; // Scroll to bottom
+        }
+
+        function sendChatMessage() {
+            const chatInput = document.getElementById('chatInput');
+            const messageText = chatInput.value.trim();
+
+            if (!messageText || !activeChatSessionId) return;
+
+            const chatSessions = JSON.parse(localStorage.getItem('foundersphere_chat_sessions'));
+            const sessionIndex = chatSessions.findIndex(s => s.id === activeChatSessionId);
+
+            if (sessionIndex === -1) {
+                showNotification('Chat session not found.', 'error');
+                return;
+            }
+
+            const newMessage = {
+                senderId: currentUser.id,
+                text: messageText,
+                timestamp: new Date().toISOString()
+            };
+
+            chatSessions[sessionIndex].messages.push(newMessage);
+            localStorage.setItem('foundersphere_chat_sessions', JSON.stringify(chatSessions));
+
+            chatInput.value = '';
+            renderChatMessages(chatSessions[sessionIndex].messages);
+        }
+
+
         // User Profile Modal
         function viewUserProfile(userId) {
             const users = JSON.parse(localStorage.getItem('foundersphere_users'));
@@ -1603,6 +2113,31 @@
             }
             else {
                 friendStatusContainer.innerHTML = `<button class="btn btn-primary btn-sm" onclick="sendFriendRequest('${userId}')">Add Friend</button>`;
+            }
+
+            // New: Show mentorship status
+            const mentorshipStatusContainer = document.getElementById('mentorshipStatus');
+            mentorshipStatusContainer.innerHTML = ''; // Clear previous status
+
+            if (userId !== currentUser.id) {
+                const mentorshipStatus = getMentorshipStatus(userId);
+                if (currentUser.userType === 'mentor' && user.userType === 'student') {
+                    if (mentorshipStatus === 'none') {
+                        mentorshipStatusContainer.innerHTML = `<button class="btn btn-primary btn-sm" onclick="sendMentorshipRequest('${userId}')">Ask for Mentoring</button>`;
+                    } else if (mentorshipStatus === 'pending') {
+                        mentorshipStatusContainer.innerHTML = `<button class="btn btn-secondary btn-sm" disabled>Mentorship Request Sent</button>`;
+                    } else if (mentorshipStatus === 'mentoring') {
+                        mentorshipStatusContainer.innerHTML = `<button class="btn btn-success btn-sm" disabled>Mentoring This Student</button>`;
+                    }
+                } else if (currentUser.userType === 'student' && user.userType === 'mentor') {
+                    if (mentorshipStatus === 'none') {
+                        mentorshipStatusContainer.innerHTML = `<span style="color: var(--accent-color);">This mentor is available.</span>`;
+                    } else if (mentorshipStatus === 'pending_received') {
+                        mentorshipStatusContainer.innerHTML = `<span style="color: var(--warning-color);">Mentor has requested you. Check Mentorship Requests tab.</span>`;
+                    } else if (mentorshipStatus === 'mentoring_by_me') {
+                        mentorshipStatusContainer.innerHTML = `<button class="btn btn-success btn-sm" disabled>Your Mentor</button>`;
+                    }
+                }
             }
             
             // Display user's projects
@@ -1669,12 +2204,16 @@
         window.onclick = function(event) {
             const supportModal = document.getElementById('supportModal');
             const userProfileModal = document.getElementById('userProfileModal');
+            const chatModal = document.getElementById('chatModal');
             
             if (event.target === supportModal) {
                 closeSupportModal();
             }
             if (event.target === userProfileModal) {
                 closeUserProfileModal();
+            }
+            if (event.target === chatModal) {
+                closeChatModal();
             }
         }
         // Toggle logout menu visibility when clicking avatar
@@ -1698,7 +2237,7 @@ document.addEventListener('click', () => {
 // Logout button click handler
 logoutBtn.addEventListener('click', () => {
     // Clear sessionStorage login info
-    sessionStorage.removeItem('loggedInUser Email');
+    sessionStorage.removeItem('loggedInUserEmail'); // Corrected key
     // Optionally clear other session data if any
 
     // Redirect to login page
