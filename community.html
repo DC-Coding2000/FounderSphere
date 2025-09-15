@@ -713,8 +713,8 @@
         <!-- Tab Navigation -->
         <div class="tab-nav fade-in">
             <button class="tab-btn active" onclick="switchTab('projects', event)">All Projects</button>
-            <button class="tab-btn" onclick="switchTab('submit-tab', event)">Submit Project</button>
-            <button class="tab-btn" onclick="switchTab('projects-tab', event)">My Projects</button>
+            <button class="tab-btn" id="submitProjectTabBtn" style="display: none;" onclick="switchTab('submit', event)">Submit Project</button>
+            <button class="tab-btn" id="myProjectsTabBtn" style="display: none;" onclick="switchTab('my-projects', event)">My Projects</button>
             <button class="tab-btn" onclick="switchTab('friends', event)">Friends</button>
             <button class="tab-btn" id="mentorshipRequestsTabBtn" style="display: none;" onclick="switchTab('mentorship-requests', event)">Mentorship Requests</button>
             <button class="tab-btn" id="chatsTabBtn" style="display: none;" onclick="switchTab('chats', event)">Chats</button>
@@ -1085,14 +1085,20 @@
 
             const mentorshipRequestsTabBtn = document.getElementById('mentorshipRequestsTabBtn');
             const chatsTabBtn = document.getElementById('chatsTabBtn');
+            const submitProjectTabBtn = document.getElementById('submitProjectTabBtn'); // Added
+            const myProjectsTabBtn = document.getElementById('myProjectsTabBtn'); // Added
             const mentorStudentCount = document.getElementById('mentorStudentCount');
 
             if (currentUser.userType === 'student') {
                 mentorshipRequestsTabBtn.style.display = 'inline-block';
+                submitProjectTabBtn.style.display = 'inline-block'; // Students can submit projects
+                myProjectsTabBtn.style.display = 'inline-block'; // Students have their own projects
                 mentorStudentCount.textContent = `Mentors: ${currentUser.mentors ? currentUser.mentors.length : 0}`;
                 mentorStudentCount.style.display = 'inline-block';
             } else if (currentUser.userType === 'mentor') {
                 mentorshipRequestsTabBtn.style.display = 'none'; // Mentors don't receive requests, they send them
+                submitProjectTabBtn.style.display = 'none'; // Mentors cannot submit projects
+                myProjectsTabBtn.style.display = 'none'; // Mentors don't have "my projects" in this context
                 mentorStudentCount.textContent = `Students: ${currentUser.students ? currentUser.students.length : 0}`;
                 mentorStudentCount.style.display = 'inline-block';
             }
@@ -1110,7 +1116,10 @@
             document.getElementById('friendCount').textContent = currentUser.friends ? currentUser.friends.length : 0;
             document.getElementById('likesGiven').textContent = currentUser.likedProjects ? currentUser.likedProjects.length : 0;
             
-            loadMyProjects();
+            // Only load these if the user type is student or if the tab is explicitly active
+            if (currentUser.userType === 'student' || document.getElementById('my-projects-tab').classList.contains('active')) {
+                loadMyProjects();
+            }
             loadProfileProjects();
             loadFriends();
             loadMentorshipRequests(); // New
@@ -1156,6 +1165,7 @@
             } else if (tabName === 'chats') { // New
                 loadChatSessions();
             }
+            // No specific load function needed for 'submit' tab as it's just a form
         }
 
         // Project Management
@@ -2249,4 +2259,3 @@ logoutBtn.addEventListener('click', () => {
 </body>
 
 </html>
-
